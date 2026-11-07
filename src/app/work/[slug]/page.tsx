@@ -9,6 +9,7 @@ import { TransitionLink } from "@/components/motion/transition-link";
 import { Reveal, RevealItem } from "@/components/motion/reveal";
 import { CountUp } from "@/components/motion/count-up";
 import { WipeImage } from "@/components/motion/wipe-image";
+import { Magnetic } from "@/components/motion/magnetic";
 
 // Every internal case page is pre-rendered at build time; unknown slugs 404.
 export const dynamicParams = false;
@@ -100,18 +101,9 @@ export default async function CasePage({ params }: PageProps<"/work/[slug]">) {
             ))}
           </div>
         </>
-      ) : (
-        <section className="shell py-[var(--section-y)]">
-          {/* TODO: write this case study in src/content/cases.ts */}
-          <div className="mx-auto max-w-[44ch] text-center">
-            <p className="t-label mb-6">Write-up in progress</p>
-            <p className="t-h2">The full story is better told on a call.</p>
-            <a href={person.bookingUrl} className="btn-primary mt-10">
-              Book 20 minutes <span aria-hidden>→</span>
-            </a>
-          </div>
-        </section>
-      )}
+      ) : null}
+
+      <CaseCta label={study ? "Want the details?" : "Write-up in progress"} />
 
       <nav aria-label="Next case study" className="border-t border-line">
         <TransitionLink href={`/work/${next.slug}`} className="next-case group shell flex flex-col gap-6 py-20 md:flex-row md:items-end md:justify-between md:py-28">
@@ -125,6 +117,38 @@ export default async function CasePage({ params }: PageProps<"/work/[slug]">) {
         </TransitionLink>
       </nav>
     </article>
+  );
+}
+
+/** Closing call-to-action on every case page: the rest of the story is a conversation. */
+function CaseCta({ label }: { label: string }) {
+  return (
+    <section aria-labelledby="case-cta-title" className="border-t border-line">
+      <Reveal className="shell mx-auto flex max-w-[52rem] flex-col items-center py-[var(--section-y)] text-center">
+        <RevealItem as="p" className="t-label mb-6">
+          <span className="live-dot mr-2.5 inline-block align-middle" aria-hidden />
+          {label}
+        </RevealItem>
+        <RevealItem>
+          <h2 id="case-cta-title" className="t-h1 [text-wrap:balance]">
+            The full story is <em>better told on a call.</em>
+          </h2>
+        </RevealItem>
+        <RevealItem as="p" className="t-body mt-6 max-w-[44ch] text-muted">
+          The trade-offs, the dead ends, and what I&rsquo;d do differently. Twenty minutes, no slides.
+        </RevealItem>
+        <RevealItem className="mt-10 flex flex-wrap items-center justify-center gap-3">
+          <Magnetic>
+            <a href={person.bookingUrl} target="_blank" rel="noopener" className="btn-primary group">
+              Book a 20-min call <span className="btn-arrow" aria-hidden>→</span>
+            </a>
+          </Magnetic>
+          <a href={`mailto:${person.email}`} className="btn-ghost group">
+            Email me <span className="btn-arrow" aria-hidden>→</span>
+          </a>
+        </RevealItem>
+      </Reveal>
+    </section>
   );
 }
 
