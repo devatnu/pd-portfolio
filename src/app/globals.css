@@ -448,7 +448,7 @@ body {
 /* Mobile hero: the photo sits behind the copy; copy starts around the chin line and
    overlaps the shaded lower half. No full-screen min-height, so № 02 follows right after. */
 @media (max-width: 767px) {
-  .hero { padding-top: 40vw; min-height: 0; }
+  .hero { padding-top: 48vw; min-height: 0; }
 }
 
 /* Reduced-motion safety net: any CSS transition/animation not handled above lands instantly.
