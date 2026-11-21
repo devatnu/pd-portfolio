@@ -21,7 +21,7 @@ export function RevealCard({ project, featured, onClickCapture }: { project: Pro
       className="reveal-card group relative block aspect-[4/5] overflow-hidden rounded-[4px] bg-surface"
     >
       <Image
-        src={project.cover}
+        src={project.card}
         alt={`${project.title} cover`}
         fill
         draggable={false}

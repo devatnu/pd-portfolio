@@ -30,7 +30,7 @@ All copy and data live in **`src/content/`**. Components only read from these fi
 | `src/content/cases.ts` | Case study bodies for `/work/[slug]`, keyed by project slug |
 | `src/content/sections.ts` | What I do, About, Experience, Education, Expertise, FAQ, Contact |
 
-Images live in `public/` (portrait at `public/shubham-soni.png`, path set in `src/content/hero.ts`, project covers and thumbs in `public/work/`).
+Images live in `public/` (portrait at `public/shubham-soni.png`, path set in `src/content/hero.ts`, project images in `public/work/`: a 2:1 cover, a 4:5 card and a 4:3 thumb per project).
 The resume is `public/resume.pdf`; replace the file to update it.
 
 Placeholders are marked with `TODO:` comments. Find them all with:
@@ -41,7 +41,7 @@ grep -rn "TODO" src
 
 ### Adding a project
 
-1. Drop `my-project-cover.jpg` (~1600×1000) and `my-project-thumb.jpg` (~480×360) into `public/work/`.
+1. Drop `my-project-cover.jpg` (~2000×1000), `my-project-card.jpg` (~1200×1500) and `my-project-thumb.jpg` (~960×720) into `public/work/`.
 2. Add an object to `projects` in `src/content/projects.ts`.
 3. Either set `external: "https://…"` to link out, or add an entry under the same slug in `src/content/cases.ts`.
    A project with neither still gets a page with a "write-up in progress" note.

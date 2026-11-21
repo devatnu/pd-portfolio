@@ -3,7 +3,10 @@
  * - Projects show in one horizontal carousel. `featured: true` puts it first with a badge
  *   (first match wins; if a filter hides it, the first visible project leads).
  * - Give it a case study in src/content/cases.ts, or set `external` to link out.
- * - Images live in /public/work. Covers ~1600×1000, thumbs ~480×360.
+ * - Images live in /public/work:
+ *     cover  ~2000×1000 (2:1)  top of the case page
+ *     card   ~1200×1500 (4:5)  carousel card; keep the subject in the top half, text sits over the bottom
+ *     thumb  ~960×720  (4:3)   "Next case" link at the bottom of a case page
  */
 export type Project = {
   slug: string;
@@ -15,118 +18,56 @@ export type Project = {
   role: string;
   sector: string;
   cover: string;
+  card: string;
   thumb: string;
   featured: boolean;
   external?: string; // link out instead of an internal case page
 };
 
-export const filters = ["All", "AI", "Fintech", "Consumer", "Design systems"] as const;
+export const filters = ["All", "Android", "iOS"] as const;
 export type Filter = (typeof filters)[number];
 
-// SAMPLE projects: fictional placeholders. TODO: replace with real work.
 export const projects: Project[] = [
   {
-    slug: "ledgerly",
+    slug: "embedded-insurance",
     index: "01",
-    title: "Ledgerly",
-    summary: "A credit-builder app that turns rent and bill payments into a credit history.",
-    tags: ["Fintech", "AI"],
+    title: "Embedded Insurance",
+    summary: "Adding a small insurance plan to a loan offer, without putting the loan itself at risk.",
+    tags: ["Fintech", "Android"],
     year: "2026",
-    role: "Lead Product Designer",
-    sector: "Fintech",
-    cover: "/work/ledgerly-cover.jpg",
-    thumb: "/work/ledgerly-thumb.jpg",
+    role: "Product Designer, design owner",
+    sector: "Lending",
+    cover: "/work/embedded-insurance-cover.jpg",
+    card: "/work/embedded-insurance-card.jpg",
+    thumb: "/work/embedded-insurance-thumb.jpg",
     featured: true,
   },
   {
-    slug: "pebble-pay",
+    slug: "upi-autopay",
     index: "02",
-    title: "Pebble Pay",
-    summary: "Split bills and settle up in two taps, without the awkward reminders.",
-    tags: ["Fintech", "Consumer"],
-    year: "2025",
-    role: "Product Designer",
+    title: "UPI AutoPay",
+    summary: "Rebuilding EMI AutoPay setup around the choice borrowers were already making.",
+    tags: ["Fintech", "Android"],
+    year: "2026",
+    role: "Product Designer, design lead",
     sector: "Payments",
-    cover: "/work/pebble-pay-cover.jpg",
-    thumb: "/work/pebble-pay-thumb.jpg",
+    cover: "/work/upi-autopay-cover.jpg",
+    card: "/work/upi-autopay-card.jpg",
+    thumb: "/work/upi-autopay-thumb.jpg",
     featured: false,
   },
   {
-    slug: "atlas-design-system",
+    slug: "video-kyc-ios",
     index: "03",
-    title: "Atlas Design System",
-    summary: "One token-based system shipping a single UI to iOS, Android and web.",
-    tags: ["Design systems"],
-    year: "2025",
-    role: "Design Systems Lead",
-    sector: "Platform",
-    cover: "/work/atlas-design-system-cover.jpg",
-    thumb: "/work/atlas-design-system-thumb.jpg",
-    featured: false,
-  },
-  {
-    slug: "muse-notes",
-    index: "04",
-    title: "Muse Notes",
-    summary: "An AI writing companion that turns voice memos into structured notes.",
-    tags: ["AI", "Consumer"],
-    year: "2024",
-    role: "Product Designer",
-    sector: "Productivity",
-    cover: "/work/muse-notes-cover.jpg",
-    thumb: "/work/muse-notes-thumb.jpg",
-    featured: false,
-  },
-  {
-    slug: "harvest",
-    index: "05",
-    title: "Harvest",
-    summary: "A grocery app that plans the week's meals around what's on sale.",
-    tags: ["Consumer"],
-    year: "2023",
-    role: "Senior Product Designer",
-    sector: "Grocery",
-    cover: "/work/harvest-cover.jpg",
-    thumb: "/work/harvest-thumb.jpg",
-    featured: false,
-  },
-  {
-    slug: "northstar-insights",
-    index: "06",
-    title: "Northstar Insights",
-    summary: "An AI research assistant that clusters interviews into themes and quotes.",
-    tags: ["AI", "Design systems"],
-    year: "2024",
-    role: "Design Lead",
-    sector: "Research tools",
-    cover: "/work/northstar-insights-cover.jpg",
-    thumb: "/work/northstar-insights-thumb.jpg",
-    featured: false,
-  },
-  {
-    slug: "kinetic",
-    index: "07",
-    title: "Kinetic",
-    summary: "A habit-first workout app built around ten-minute sessions.",
-    tags: ["Consumer"],
-    year: "2022",
-    role: "Product Designer",
-    sector: "Health & fitness",
-    cover: "/work/kinetic-cover.jpg",
-    thumb: "/work/kinetic-thumb.jpg",
-    featured: false,
-  },
-  {
-    slug: "vault-business",
-    index: "08",
-    title: "Vault Business",
-    summary: "Cash-flow dashboard and invoicing for small businesses.",
-    tags: ["Fintech", "Design systems"],
-    year: "2021",
-    role: "Product Designer",
-    sector: "SME banking",
-    cover: "/work/vault-business-cover.jpg",
-    thumb: "/work/vault-business-thumb.jpg",
+    title: "Video KYC on iOS",
+    summary: "Making identity verification clearer and more predictable for people taking a loan on their phone.",
+    tags: ["Fintech", "iOS"],
+    year: "2026",
+    role: "Product Designer, design lead",
+    sector: "Identity",
+    cover: "/work/video-kyc-ios-cover.jpg",
+    card: "/work/video-kyc-ios-card.jpg",
+    thumb: "/work/video-kyc-ios-thumb.jpg",
     featured: false,
   },
 ];

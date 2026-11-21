@@ -15,11 +15,14 @@ export function CountUp({ value }: { value: string }) {
     const [, pre, num, post] = match;
     const target = parseFloat(num.replace(/,/g, ""));
     const decimals = num.includes(".") ? num.split(".")[1].length : 0;
+    const grouped = num.includes(","); // keep "1,300" from turning into "1300" while it counts
+    const fmt = (v: number) =>
+      grouped ? v.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) : v.toFixed(decimals);
     const el = ref.current;
     const controls = animate(0, target, {
       duration: 1.6,
       ease: [0.22, 1, 0.36, 1],
-      onUpdate: (v) => (el.textContent = `${pre}${v.toFixed(decimals)}${post}`),
+      onUpdate: (v) => (el.textContent = `${pre}${fmt(v)}${post}`),
     });
     return () => controls.stop();
   }, [inView, reduced, match]);

@@ -43,8 +43,7 @@ export default async function CasePage({ params }: PageProps<"/work/[slug]">) {
   const meta = [
     { k: "Year", v: p.year },
     { k: "Role", v: p.role },
-    { k: "Sector", v: p.sector },
-    ...(study ? [{ k: "Timeline", v: study.timeline }, { k: "Team", v: study.team }] : []),
+    ...(study ? study.details : [{ k: "Sector", v: p.sector }]),
   ];
 
   return (
@@ -77,7 +76,8 @@ export default async function CasePage({ params }: PageProps<"/work/[slug]">) {
       </header>
 
       <div className="shell">
-        <WipeImage src={p.cover} alt={`${p.title} cover image`} preload className="aspect-[16/10] md:aspect-[16/8]" sizes="100vw" />
+        <WipeImage src={p.cover} alt={`${p.title}: key screens`} preload className="aspect-[16/10] md:aspect-[16/8]" sizes="100vw" />
+        {study?.coverCaption && <p className="t-caption mt-4 max-w-[80ch]">{study.coverCaption}</p>}
       </div>
 
       {study ? (
@@ -94,10 +94,14 @@ export default async function CasePage({ params }: PageProps<"/work/[slug]">) {
                 </RevealItem>
               ))}
             </Reveal>
+            {study.outcomesNote && <p className="t-caption mt-4">{study.outcomesNote}</p>}
           </section>
-          <div className="shell space-y-[var(--section-y)] pb-[var(--section-y)]">
+          <div className="shell pb-[var(--section-y)]">
             {study.blocks.map((b, i) => (
-              <Block key={i} block={b} />
+              // `tight` blocks continue the section above, so they sit closer to it.
+              <div key={i} className={i === 0 ? "" : b.tight ? "mt-12 md:mt-16" : "mt-[var(--section-y)]"}>
+                <Block block={b} />
+              </div>
             ))}
           </div>
         </>
@@ -152,39 +156,133 @@ function CaseCta({ label }: { label: string }) {
   );
 }
 
+/** Body column of a case section: a label column on the left (empty for continuation blocks). */
+function Row({ label, children }: { label?: string; children: React.ReactNode }) {
+  return (
+    <section className="grid gap-8 md:grid-cols-[12rem_minmax(0,1fr)]">
+      {label ? <p className="t-label md:sticky md:top-28 md:self-start">{label}</p> : <span aria-hidden className="hidden md:block" />}
+      {children}
+    </section>
+  );
+}
+
 function Block({ block }: { block: CaseBlock }) {
   switch (block.type) {
     case "text":
+      return (
+        <Row label={block.label}>
+          <Reveal className="max-w-[64ch]">
+            {block.heading && (
+              <RevealItem as="h2" className="t-h2 mb-8">
+                {block.heading}
+              </RevealItem>
+            )}
+            {block.body.map((para, i) => (
+              <RevealItem as="p" key={i} className="t-body mb-5 text-muted">
+                {para}
+              </RevealItem>
+            ))}
+            {block.note && (
+              <RevealItem as="p" className="t-caption mt-2">
+                {block.note}
+              </RevealItem>
+            )}
+          </Reveal>
+        </Row>
+      );
     case "list":
       return (
-        <section className="grid gap-8 md:grid-cols-[12rem_minmax(0,1fr)]">
-          <p className="t-label md:sticky md:top-28 md:self-start">{block.label}</p>
+        <Row label={block.label}>
           <Reveal className="max-w-[64ch]">
             <RevealItem as="h2" className="t-h2 mb-8">
               {block.heading}
             </RevealItem>
-            {block.type === "text" ? (
-              block.body.map((para, i) => (
-                <RevealItem as="p" key={i} className="t-body mb-5 text-muted">
-                  {para}
-                </RevealItem>
-              ))
-            ) : (
-              <ol className="border-t border-line">
-                {block.items.map((it, i) => (
-                  <RevealItem as="li" key={it.title} className="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-2 border-b border-line py-7">
-                    <span className="t-label pt-1.5 text-accent">{String(i + 1).padStart(2, "0")}</span>
-                    <span>
-                      <span className="t-h3 block">{it.title}</span>
-                      <span className="t-body mt-2 block text-muted">{it.body}</span>
-                    </span>
-                  </RevealItem>
-                ))}
-              </ol>
+            {block.intro && (
+              <RevealItem as="p" className="t-body mb-10 text-muted">
+                {block.intro}
+              </RevealItem>
             )}
+            <ol className="border-t border-line">
+              {block.items.map((it, i) => (
+                <RevealItem
+                  as="li"
+                  key={it.title}
+                  className={`grid gap-2 border-b border-line py-7 ${it.marker ? "md:grid-cols-[7rem_minmax(0,1fr)]" : "grid-cols-[2.5rem_minmax(0,1fr)]"}`}
+                >
+                  <span className="t-label pt-1.5 text-accent">{it.marker ?? String(i + 1).padStart(2, "0")}</span>
+                  <span>
+                    <span className="t-h3 block">{it.title}</span>
+                    <span className="t-body mt-2 block text-muted">{it.body}</span>
+                  </span>
+                </RevealItem>
+              ))}
+            </ol>
           </Reveal>
-        </section>
+        </Row>
       );
+    case "stats":
+      return (
+        <Row>
+          <div>
+            <Reveal className={`grid gap-4 ${block.items.length === 2 ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}>
+              {block.items.map((it) => (
+                <RevealItem key={it.value + it.label} className="rounded-[4px] border border-line p-6 md:p-7">
+                  {it.kicker && <p className="t-label mb-3 text-accent">{it.kicker}</p>}
+                  <p className="font-display text-[clamp(2rem,3.5vw,3rem)] leading-none">
+                    <CountUp value={it.value} />
+                  </p>
+                  <p className="t-caption mt-3">{it.label}</p>
+                </RevealItem>
+              ))}
+            </Reveal>
+            {block.note && <p className="t-caption mt-4">{block.note}</p>}
+          </div>
+        </Row>
+      );
+    case "bars": {
+      const max = block.max ?? Math.max(...block.rows.flatMap((r) => r.values));
+      const series = block.rows[0]?.values.length ?? 1;
+      // Earlier series muted, the last (the new/current one) in the accent colour.
+      const tone = (k: number) => (series > 1 && k === series - 1 ? "bg-accent" : "bg-muted/50");
+      return (
+        <Row>
+          <figure className="max-w-[44rem]">
+            <figcaption className="mb-6">
+              <span className="t-h3 block">{block.title}</span>
+              {block.sub && <span className="t-caption mt-1 block">{block.sub}</span>}
+              {block.legend && (
+                <span className="mt-4 flex flex-wrap gap-5">
+                  {block.legend.map((l, k) => (
+                    <span key={l} className="t-caption inline-flex items-center gap-2">
+                      <span aria-hidden className={`inline-block h-2.5 w-2.5 rounded-[2px] ${tone(k)}`} />
+                      {l}
+                    </span>
+                  ))}
+                </span>
+              )}
+            </figcaption>
+            <Reveal as="dl" className="border-t border-line">
+              {block.rows.map((r) => (
+                <RevealItem key={r.label} className="border-b border-line py-5">
+                  <dt className="t-body mb-3 text-sm text-muted">{r.label}</dt>
+                  {r.values.map((v, k) => (
+                    <dd key={k} className="mt-2 flex items-center gap-4 first:mt-0">
+                      <span className="relative h-2 flex-1 overflow-hidden rounded-full bg-line">
+                        <span className={`absolute inset-y-0 left-0 rounded-full ${tone(k)}`} style={{ width: `${(v / max) * 100}%` }} />
+                      </span>
+                      <span className="w-14 text-right text-sm tabular-nums">
+                        {block.legend && <span className="sr-only">{block.legend[k]}: </span>}
+                        {r.display[k]}
+                      </span>
+                    </dd>
+                  ))}
+                </RevealItem>
+              ))}
+            </Reveal>
+          </figure>
+        </Row>
+      );
+    }
     case "image":
       return (
         <figure className={block.wide ? "" : "md:ml-[12rem]"}>
